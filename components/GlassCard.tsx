@@ -10,6 +10,8 @@ export default function GlassCard({ item, active, i, uid, cardRefs }: { item: Ex
     
     const [hovered, setHovered] = useState(false);
     const [mouse, setMouse] = useState({ x: 50, y: 50 });
+    // Odd rows sit left of the rail on desktop, so they slide in from the left.
+    const fromX = i % 2 === 1 ? -80 : 80;
     return (
         <div
             ref={(el) => {
@@ -27,8 +29,8 @@ export default function GlassCard({ item, active, i, uid, cardRefs }: { item: Ex
                 style={{
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), 0 24px 60px -24px rgba(0,0,0,0.65)",
                 opacity: active ? 1 : 0,
-                transform: active ? "translateY(0)" : "translateY(16px)",
-                transition: "opacity 700ms ease, transform 700ms cubic-bezier(.2,.8,.2,1)",
+                transform: active ? "translateX(0)" : `translateX(${fromX}px)`,
+                transition: "opacity 700ms ease, transform 800ms cubic-bezier(.2,.8,.2,1)",
                 }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}

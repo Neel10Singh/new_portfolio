@@ -11,7 +11,8 @@ const spaceGrotesk = Space_Grotesk({
 
 import { useEffect, useState } from "react";
 import FireBackground from "@/components/FireBackground";
-import NavBar from "@/components/Navbar";
+import FloatingFireLinks from "@/components/FLoatingFireLinks";
+import FireLinksScene from "@/components/FireLinksScene"
 const Hero = () => {
 
     const [compact, setCompact] = useState(false);
@@ -68,8 +69,19 @@ const Hero = () => {
 
     return(
         <div className="w-full h-dvh">
-            <NavBar compact = {compact}/>
-            <div className="h-dvh relative">
+            
+            <div className="h-dvh relative isolate overflow-hidden">
+                <FireBackground speed={3}/>
+                <FireLinksScene
+                    className="z-10"
+                />
+                {/* <div className="z-10 relative h-full w-full bg-white/0 backdrop-blur-[7.1px]"></div> */}
+                <div className="absolute flex z-20 justify-between h-[50vh] w-[70vw] top-1/2 left-1/2 -translate-1/2">
+                    <div className="lines relative line1 h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
+                    <div className="lines relative line3 h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
+                    <div className="lines relative line2 hiden md:inline h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
+                </div>
+                
                 <motion.h1 
                     initial={false}
                     animate={{
@@ -84,16 +96,12 @@ const Hero = () => {
                         stiffness: 180,
                         damping: 28,
                     }}
-                    className={`fixed z-20 md:whitespace-nowrap text-center font-bold text-white mix-blend-difference ${spaceGrotesk.className}`}>
-                    NEELAKSH <span className="hidden md:inline">SINGH</span>
+                    className={`fixed z-40 md:whitespace-nowrap text-center font-bold text-white mix-blend-difference ${spaceGrotesk.className}`}>
+                    NEEL//KSH <span className="hidden md:inline">SINGH</span>
                 </motion.h1>
-                <div className="z-10 relative h-full w-full bg-white/0 backdrop-blur-[7.1px]"></div>
-                <div className="absolute flex z-20 justify-between h-[50vh] w-[70vw] top-1/2 left-1/2 -translate-1/2">
-                    <div className="lines relative line1 h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
-                    <div className="lines relative line3 h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
-                    <div className="lines relative line2 hiden md:inline h-full w-1 overflow-hidden bg-linear-to-b from-neutral-500/10 via-neutral-500/20 to-transparent"/>
-                </div>
-                <FireBackground speed={3}/>
+                    
+                {/* <FloatingFireLinks /> */}
+                
             </div>
         </div>
     )

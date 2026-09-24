@@ -203,7 +203,7 @@ export default function ExperienceTimeline({
 	const offset = len * (1 - prog.drawn);
 
 	return (
-		<div className="px-5 py-24 2xl:px-60 lg:px-40 md:py-32 w-full flex flex-col items-center">
+		<div id="experience" className="overflow-x-clip px-5 py-24 2xl:px-60 lg:px-40 md:py-32 w-full flex flex-col items-center">
 		<h2 className={`mb-14 text-center font-bold text-white mix-blend-difference ${spaceGrotesk.className} text-[clamp(4rem,16vw,40rem)] md:mb-20`}>
 			{heading}
 		</h2>

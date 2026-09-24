@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, View } from "@react-three/drei";
 import * as THREE from "three";
@@ -400,29 +401,68 @@ function ProceduralMark({ kind, color }: { kind: SymbolKind; color: string }) {
     }
 }
 
+/** Card drop-in: how far above its slot a card starts, and the stagger. */
+const DROP_FROM = -48;
+const DROP_STAGGER = 0.06;
+const DROP_MAX_DELAY = 0.36;
+
+/** Logo pop-in spring, run by hand in useFrame since it lives in WebGL. */
+const POP_STIFFNESS = 180;
+const POP_DAMPING = 11;
+
 function RotatingLogo({
     skill,
     index,
     animate,
+    revealed,
+    revealDelay,
 }: {
     skill: Skill;
     index: number;
     animate: boolean;
+    revealed: boolean;
+    revealDelay: number;
 }) {
     const logoRef = useRef<THREE.Group>(null);
+    const pop = useRef({ value: 0, velocity: 0, wait: 0 });
     const { invalidate } = useThree();
     const color = brandColor(skill);
 
     useEffect(() => {
         // Ensures a final static frame when animation is paused.
         invalidate();
-    }, [animate, invalidate]);
+    }, [animate, revealed, invalidate]);
 
     useFrame((state, delta) => {
-        if (!animate || !logoRef.current) return;
+        const logo = logoRef.current;
+        if (!logo) return;
 
-        logoRef.current.rotation.y += delta * (0.5 + (index % 4) * 0.035);
-        logoRef.current.rotation.x =
+        // The logo is drawn into the shared canvas, so it can't inherit the
+        // card's opacity - it pops in with a matching bounce instead.
+        const spring = pop.current;
+        const step = Math.min(delta, 1 / 30);
+
+        if (!revealed) {
+            spring.value = 0;
+            spring.velocity = 0;
+            spring.wait = revealDelay;
+        } else if (!animate) {
+            spring.value = 1;
+        } else if (spring.wait > 0) {
+            spring.wait -= step;
+        } else {
+            spring.velocity +=
+                (1 - spring.value) * POP_STIFFNESS * step -
+                spring.velocity * POP_DAMPING * step;
+            spring.value += spring.velocity * step;
+        }
+
+        logo.scale.setScalar(Math.max(spring.value, 0.0001));
+
+        if (!animate) return;
+
+        logo.rotation.y += delta * (0.5 + (index % 4) * 0.035);
+        logo.rotation.x =
             Math.sin(state.clock.elapsedTime * 0.65 + index * 0.4) * 0.09;
     });
 
@@ -441,15 +481,25 @@ function LogoScene({
     skill,
     index,
     animate,
+    revealed,
+    revealDelay,
 }: {
     skill: Skill;
     index: number;
     animate: boolean;
+    revealed: boolean;
+    revealDelay: number;
 }) {
     return (
         <>
             <PerspectiveCamera makeDefault fov={32} position={[0, 0, 5]} />
-            <RotatingLogo animate={animate} index={index} skill={skill} />
+            <RotatingLogo
+                animate={animate}
+                index={index}
+                revealDelay={revealDelay}
+                revealed={revealed}
+                skill={skill}
+            />
         </>
     );
 }
@@ -494,14 +544,32 @@ function useAnimationState(sectionRef: React.RefObject<HTMLElement | null>) {
 function SkillCard({
     skill,
     viewIndex,
+    groupIndex,
     animate,
 }: {
     skill: Skill;
     viewIndex: number;
+    /** Position within its group, for the stagger. */
+    groupIndex: number;
     animate: boolean;
 }) {
+    const cardRef = useRef<HTMLElement | null>(null);
+    const inView = useInView(cardRef, { once: true, amount: 0.35 });
+    const reduceMotion = useReducedMotion();
+
+    const revealed = reduceMotion || inView;
+    const delay = Math.min(groupIndex * DROP_STAGGER, DROP_MAX_DELAY);
+
     return (
-        <article className="group relative isolate h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#090909] transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-orange-400/50 hover:shadow-[0_18px_50px_rgba(249,115,22,0.10)]">
+        <motion.article
+            ref={cardRef}
+            initial={reduceMotion ? false : { opacity: 0, y: DROP_FROM }}
+            animate={revealed ? { opacity: 1, y: 0 } : undefined}
+            transition={{
+                y: { type: "spring", stiffness: 320, damping: 14, delay },
+                opacity: { duration: 0.25, delay },
+            }}
+            className="group relative isolate h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#090909] transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-orange-400/50 hover:shadow-[0_18px_50px_rgba(249,115,22,0.10)]">
             <div
                 aria-hidden
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -515,7 +583,13 @@ function SkillCard({
                 className="pointer-events-none absolute inset-x-0 top-2 h-[112px]"
                 index={viewIndex}
             >
-                <LogoScene animate={animate} index={viewIndex} skill={skill} />
+                <LogoScene
+                    animate={animate}
+                    index={viewIndex}
+                    revealDelay={delay}
+                    revealed={revealed}
+                    skill={skill}
+                />
             </View>
 
             <p
@@ -523,7 +597,7 @@ function SkillCard({
             >
                 {skill.name}
             </p>
-        </article>
+        </motion.article>
     );
 }
 
@@ -533,6 +607,7 @@ export default function SkillsSection() {
 
     return (
         <section
+            id="skills"
             ref={sectionRef}
             aria-labelledby="skills-heading"
             className="relative isolate w-full bg-black px-5 py-24 pt-12 text-white md:px-10 md:py-32  md:pt-12 xl:px-16"
@@ -566,6 +641,7 @@ export default function SkillsSection() {
                                     return (
                                         <SkillCard
                                             animate={shouldAnimate}
+                                            groupIndex={skillIndex}
                                             key={`${group.title}-${skill.name}`}
                                             skill={skill}
                                             viewIndex={absoluteIndex + 1}

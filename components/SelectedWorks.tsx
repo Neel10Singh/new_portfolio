@@ -1,6 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Courier_Prime, Space_Grotesk } from "next/font/google";
+import SideReveal from "@/components/SideReveal";
 
 const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
@@ -18,6 +19,7 @@ export type SelectedWork = {
     tags: string[];
     image?: string | StaticImageData;
     imageAlt?: string;
+    info?: string;
     meta?: string;
     external?: boolean;
     /** Used by the generated artwork when image is omitted. */
@@ -28,6 +30,7 @@ type SelectedWorksProps = {
     projects?: SelectedWork[];
     viewAllHref?: string;
     heading?: string;
+    showAll?: boolean;
 };
 
 const DEFAULT_PROJECTS: SelectedWork[] = [
@@ -115,7 +118,11 @@ function ProjectCard({
     index: number;
 }) {
     return (
-        <article id={`selected-work-card-${index}`}>
+        // Left column comes in from the left, right column from the right.
+        <SideReveal
+            from={index % 2 === 0 ? "left" : "right"}
+            id={`selected-work-card-${index}`}
+        >
             <Link
                 aria-label={`View ${project.title}`}
                 className="group/project block rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-4 focus-visible:ring-offset-black"
@@ -126,7 +133,53 @@ function ProjectCard({
                 <div className="relative aspect-[16/11] overflow-hidden bg-zinc-950">
                     <ProjectArtwork index={index} project={project} />
 
-                    <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-500 group-hover/project:bg-black/10" />
+                    {/* HOVER INFO OVERLAY */}
+                    <div
+                    className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        z-[5]
+                        flex
+                        items-center
+                        justify-center
+
+                        bg-black/0
+                        opacity-0
+                        backdrop-blur-none
+
+                        transition-[opacity,background-color,backdrop-filter]
+                        duration-500
+                        ease-out
+
+                        group-hover/project:bg-black/60
+                        group-hover/project:opacity-100
+                        group-hover/project:backdrop-blur-[2px]
+                    "
+                    >
+                    {project.info && (
+                        <p
+                        className={`
+                            ${spaceGrotesk.className}
+                            max-w-[82%]
+                            translate-y-6
+                            text-left
+                            text-[clamp(1rem,1.5vw,1.4rem)]
+                            font-medium
+                            leading-[1.4]
+                            text-white/90
+
+                            transition-transform
+                            duration-500
+                            ease-out
+
+                            group-hover/project:translate-y-0
+                        `}
+                        >
+                        {project.info}
+                        </p>
+                    )}
+                </div>
 
                     <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 flex flex-wrap gap-2 sm:inset-x-6 sm:bottom-6">
                         {project.tags.map((tag) => (
@@ -162,7 +215,7 @@ function ProjectCard({
                     ) : null}
                 </div>
             </Link>
-        </article>
+        </SideReveal>
     );
 }
 
@@ -170,11 +223,12 @@ export default function SelectedWorksRoundCursorV3({
     projects = DEFAULT_PROJECTS,
     viewAllHref = "/projects",
     heading = "SELECTED WORKS",
+    showAll = false,
 }: SelectedWorksProps) {
     return (
         <section
             aria-labelledby="selected-works-heading"
-            className="relative w-full bg-black px-5 py-24 text-white md:px-10 md:py-32 xl:px-16"
+            className="relative w-full overflow-x-clip bg-black px-5 py-24 text-white md:px-10 md:py-32 xl:px-16"
         >
 
             <div className="mx-auto max-w-[1600px]">
@@ -188,7 +242,7 @@ export default function SelectedWorksRoundCursorV3({
                         </h2>
                     </div>
 
-                    <Link
+                    {!showAll && <Link
                         className={`${courierPrime.className} group/view-all mb-1 inline-flex w-fit shrink-0 self-end items-center gap-3 rounded-full border border-orange-400/70 px-5 py-3 text-xs font-bold tracking-[0.08em] text-orange-300 transition-colors duration-300 hover:bg-orange-500 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-4 focus-visible:ring-offset-black md:mb-2 md:px-6 md:py-3.5 md:text-sm`}
                         href={viewAllHref}
                     >
@@ -199,7 +253,7 @@ export default function SelectedWorksRoundCursorV3({
                         >
                             &rarr;
                         </span>
-                    </Link>
+                    </Link>}
                 </header>
 
                 <div className="mt-20 grid gap-x-5 gap-y-20 md:mt-28 lg:grid-cols-2 lg:gap-y-28">

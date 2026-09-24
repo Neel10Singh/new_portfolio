@@ -6,6 +6,8 @@ import hbwslLogo from "@/public/hbwsl.png";
 import CodehopLogo from "@/public/codehop.png";
 import SelectedWorks, { type SelectedWork } from "@/components/SelectedWorks";
 import Gallery from "@/components/Gallery";
+import Services from "@/components/Services";
+import Footer from "@/components/Footer";
 
 import strip1 from "@/public/gallery/strip-1.png";
 import strip2 from "@/public/gallery/strip-2.png";
@@ -68,7 +70,7 @@ const projects: SelectedWork[] = [
 ];
 export default function Home() {
 	return (
-		<div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+		<div className="flex flex-col flex-1 items-center justify-center font-sans bg-black">
             <Hero />
             <div 
                 style={{
@@ -84,6 +86,7 @@ export default function Home() {
             <SelectedWorks 
                 projects={projects}
                 viewAllHref="/projects"
+                showAll={false}
             />
             <Gallery
                 images={[
@@ -95,6 +98,8 @@ export default function Home() {
                 ]}
             />
             <Recommendations />
+            <Services />
+            <Footer />
         </div>
 	);
 }

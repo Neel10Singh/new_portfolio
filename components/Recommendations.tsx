@@ -225,129 +225,129 @@ export default function RecommenderGlowSection({
     return (
         <section
             aria-labelledby="recommender-heading"
-            className={`relative isolate w-full overflow-hidden  text-white ${className}`}
+            className={`relative isolate w-full overflow-x-clip  text-white ${className}`}
         >
-            <svg
-                aria-hidden
-                className="pointer-events-none absolute -left-[8%] top-12 z-20 h-80 w-[116%] overflow-visible blur-[32px]"
-                preserveAspectRatio="none"
-                viewBox="0 0 1600 760"
-            >
-                <defs>
-                    <linearGradient
-                        id="recommender-orange-field"
-                        x1="50%"
-                        y1="0%"
-                        x2="50%"
-                        y2="100%"
-                    >
-                        <stop offset="0%" stopColor="#3b0000" stopOpacity="0" />
-                        <stop offset="5%" stopColor="#7f0000" stopOpacity="0.9" />
-                        <stop offset="12%" stopColor="#b91c1c" />
-                        <stop offset="20%" stopColor="#dc2626" />
-                        <stop offset="28%" stopColor="#f4511e" />
-                        <stop offset="36%" stopColor="#fb923c" />
-
-                        <stop offset="64%" stopColor="#fb923c" />
-                        <stop offset="72%" stopColor="#f4511e" />
-                        <stop offset="80%" stopColor="#dc2626" />
-                        <stop offset="88%" stopColor="#b91c1c" />
-                        <stop offset="95%" stopColor="#7f0000" stopOpacity="0.9" />
-                        <stop offset="100%" stopColor="#3b0000" stopOpacity="0" />
-                    </linearGradient>
-
-                    <filter
-                        id="recommender-wide-blur"
-                        x="-20%"
-                        y="-30%"
-                        width="140%"
-                        height="160%"
-                    >
-                        <feGaussianBlur stdDeviation="42" />
-                    </filter>
-
-                    <filter
-                        id="recommender-soft-blur"
-                        x="-12%"
-                        y="-18%"
-                        width="124%"
-                        height="136%"
-                    >
-                        <feGaussianBlur stdDeviation="16" />
-                    </filter>
-                </defs>
-
-                <path
-                   d="M -120 170
-                    C 80 -45 285 205 475 42
-                    C 665 -95 845 215 1025 28
-                    C 1220 -90 1415 215 1720 38
-                    L 1720 555
-                    C 1490 835 1315 495 1110 725
-                    C 905 905 750 475 540 740
-                    C 315 920 105 475 -120 770
-                    Z"
-                    fill="url(#recommender-orange-field)"
-                    filter="url(#recommender-wide-blur)"
-                    opacity="0.92"
-                />
-
-                <path
-                   d="M -120 170
-                    C 80 -45 285 205 475 42
-                    C 665 -95 845 215 1025 28
-                    C 1220 -90 1415 215 1720 38
-                    L 1720 555
-                    C 1490 835 1315 495 1110 725
-                    C 905 905 750 475 540 740
-                    C 315 920 105 475 -120 770
-                    Z"
-                    fill="url(#recommender-orange-field)"
-                    filter="url(#recommender-soft-blur)"
-                    opacity="0.98"
-                />
-
-                <path
-                   d="M -120 170
-                    C 80 -45 285 205 475 42
-                    C 665 -95 845 215 1025 28
-                    C 1220 -90 1415 215 1720 38
-                    L 1720 555
-                    C 1490 835 1315 495 1110 725
-                    C 905 905 750 475 540 740
-                    C 315 920 105 475 -120 770
-                    Z"
-                    fill="url(#recommender-orange-field)"
-                    opacity="0.72"
-                />
-            </svg>
-            {/* <div className="absolute top-0 left-0 w-full h-[450px]  backdrop-blur-xl z-30" /> */}
-
-            <div className="relative z-10 flex pt-80 w-full flex-col justify-end px-3 pb-7 sm:px-5 sm:pb-9 lg:px-7 lg:pb-11">
-                <h2
-                    id="recommender-heading"
-                    className={`${spaceGrotesk.className} whitespace-nowrap bg-gradient-to-b from-orange-600 via-white to-zinc-100 bg-clip-text text-center text-[clamp(3.15rem,14vw,13rem)] font-bold leading-[0.78] tracking-[-0.085em] text-transparent`}
+                <svg
+                    aria-hidden
+                    className="pointer-events-none absolute -left-[8%] top-12 z-20 h-80 w-[116%] overflow-visible blur-[32px]"
+                    preserveAspectRatio="none"
+                    viewBox="0 0 1600 760"
                 >
-                    {heading}
-                </h2>
+                    <defs>
+                        <linearGradient
+                            id="recommender-orange-field"
+                            x1="50%"
+                            y1="0%"
+                            x2="50%"
+                            y2="100%"
+                        >
+                            <stop offset="0%" stopColor="#3b0000" stopOpacity="0" />
+                            <stop offset="5%" stopColor="#7f0000" stopOpacity="0.9" />
+                            <stop offset="12%" stopColor="#b91c1c" />
+                            <stop offset="20%" stopColor="#dc2626" />
+                            <stop offset="28%" stopColor="#f4511e" />
+                            <stop offset="36%" stopColor="#fb923c" />
 
-                <div
-                    className={`${courierPrime.className} mt-5 grid grid-cols-4 items-center text-center text-xs md:text-sm xl:text-lg font-bold uppercase tracking-[-0.04em] text-orange-100/75 sm:mt-7`}
-                >
-                    {labels.map((label) => (
-                        <span key={label}>{label}</span>
-                    ))}
+                            <stop offset="64%" stopColor="#fb923c" />
+                            <stop offset="72%" stopColor="#f4511e" />
+                            <stop offset="80%" stopColor="#dc2626" />
+                            <stop offset="88%" stopColor="#b91c1c" />
+                            <stop offset="95%" stopColor="#7f0000" stopOpacity="0.9" />
+                            <stop offset="100%" stopColor="#3b0000" stopOpacity="0" />
+                        </linearGradient>
+
+                        <filter
+                            id="recommender-wide-blur"
+                            x="-20%"
+                            y="-30%"
+                            width="140%"
+                            height="160%"
+                        >
+                            <feGaussianBlur stdDeviation="42" />
+                        </filter>
+
+                        <filter
+                            id="recommender-soft-blur"
+                            x="-12%"
+                            y="-18%"
+                            width="124%"
+                            height="136%"
+                        >
+                            <feGaussianBlur stdDeviation="16" />
+                        </filter>
+                    </defs>
+
+                    <path
+                    d="M -120 170
+                        C 80 -45 285 205 475 42
+                        C 665 -95 845 215 1025 28
+                        C 1220 -90 1415 215 1720 38
+                        L 1720 555
+                        C 1490 835 1315 495 1110 725
+                        C 905 905 750 475 540 740
+                        C 315 920 105 475 -120 770
+                        Z"
+                        fill="url(#recommender-orange-field)"
+                        filter="url(#recommender-wide-blur)"
+                        opacity="0.92"
+                    />
+
+                    <path
+                    d="M -120 170
+                        C 80 -45 285 205 475 42
+                        C 665 -95 845 215 1025 28
+                        C 1220 -90 1415 215 1720 38
+                        L 1720 555
+                        C 1490 835 1315 495 1110 725
+                        C 905 905 750 475 540 740
+                        C 315 920 105 475 -120 770
+                        Z"
+                        fill="url(#recommender-orange-field)"
+                        filter="url(#recommender-soft-blur)"
+                        opacity="0.98"
+                    />
+
+                    <path
+                    d="M -120 170
+                        C 80 -45 285 205 475 42
+                        C 665 -95 845 215 1025 28
+                        C 1220 -90 1415 215 1720 38
+                        L 1720 555
+                        C 1490 835 1315 495 1110 725
+                        C 905 905 750 475 540 740
+                        C 315 920 105 475 -120 770
+                        Z"
+                        fill="url(#recommender-orange-field)"
+                        opacity="0.72"
+                    />
+                </svg>
+                {/* <div className="absolute top-0 left-0 w-full h-[450px]  backdrop-blur-xl z-30" /> */}
+
+                <div className="relative z-10 flex pt-80 w-full flex-col justify-end  pb-7  sm:pb-9 lg:pb-11">
+                    <h2
+                        id="recommender-heading"
+                        className={`${spaceGrotesk.className} whitespace-nowrap bg-gradient-to-b from-orange-600 via-white to-zinc-100 bg-clip-text text-center text-[clamp(3.15rem,15vw,17rem)] font-bold tracking-[-0.085em] text-transparent`}
+                    >
+                        {heading}
+                    </h2>
+
+                    <div
+                        className={`${courierPrime.className} mt-5 grid grid-cols-4 items-center text-center text-xs md:text-sm xl:text-lg font-bold uppercase tracking-[-0.04em] text-orange-100/75 sm:mt-7`}
+                    >
+                        {labels.map((label) => (
+                            <span key={label}>{label}</span>
+                        ))}
+                    </div>
                 </div>
-            </div>
-            <div className="absolute flex z-10 justify-between h-620 w-[50vw] top-80 left-1/2 -translate-x-1/2 rotate-180">
-                    <div className="lines1 relative line11 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
-                    <div className="lines1 relative line31 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
-                    <div className="lines1 relative line21 hiden md:inline h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
-            </div>
-            <div >
-                    <RecommendationDeck />
+                <div className="absolute flex z-10 justify-between h-620 w-[50vw] top-80 left-1/2 -translate-x-1/2 rotate-180">
+                        <div className="lines1 relative line11 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
+                        <div className="lines1 relative line31 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
+                        <div className="lines1 relative line21 hiden md:inline h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
+                </div>
+                <div >
+                        <RecommendationDeck />
 
-            </div>
+                </div>
         </section>
     );
 }

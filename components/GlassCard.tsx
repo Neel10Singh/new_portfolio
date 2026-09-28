@@ -18,6 +18,7 @@ export default function GlassCard({ item, active, i, uid, cardRefs }: { item: Ex
                 cardRefs.current[i] = el;
             }}
             className="min-w-0 flex-1 card rounded-2xl"
+            data-toopy-platform
             style={{
                 opacity: active ? 1 : 0,
                 transition: "opacity 700ms ease, transform 700ms cubic-bezier(.2,.8,.2,1)",

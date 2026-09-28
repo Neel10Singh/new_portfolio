@@ -1,7 +1,7 @@
 "use client"
 import { motion, type PanInfo, useReducedMotion } from "framer-motion";
 import { Courier_Prime, Space_Grotesk } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
@@ -85,10 +85,31 @@ const STACK_SPRING = {
     mass: 0.65,
 };
 
+/** Mobile tap: the front card slides out to this pose, then springs to the back. */
+const FLING_POSE = { x: 120, y: -8, rotate: 8, scale: 1.012, opacity: 1 };
+const FLING_TRANSITION = { duration: 0.2, ease: "easeOut" as const };
+
+/** Below md, cards advance on tap instead of drag, so the page can still scroll. */
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const query = window.matchMedia("(max-width: 767px)");
+        const update = () => setIsMobile(query.matches);
+        update();
+        query.addEventListener("change", update);
+        return () => query.removeEventListener("change", update);
+    }, []);
+
+    return isMobile;
+}
+
 
 function RecommendationDeck() {
     const [frontIndex, setFrontIndex] = useState(0);
+    const [isFlinging, setIsFlinging] = useState(false);
     const prefersReducedMotion = useReducedMotion();
+    const isMobile = useIsMobile();
     const total = recommendations.length;
 
     const orderedRecommendations = Array.from({ length: total }, (_, stackIndex) => {
@@ -109,6 +130,18 @@ function RecommendationDeck() {
         if (distance >= SWIPE_THRESHOLD) moveFrontCardToBack();
     };
 
+    const handleTap = () => {
+        if (total < 2 || isFlinging) return;
+        if (prefersReducedMotion) moveFrontCardToBack();
+        else setIsFlinging(true);
+    };
+
+    const handleFlingComplete = () => {
+        if (!isFlinging) return;
+        setIsFlinging(false);
+        moveFrontCardToBack();
+    };
+
     if (total === 0) return null;
 
     return (
@@ -116,30 +149,42 @@ function RecommendationDeck() {
             <p
                 className={`${courierPrime.className} text-center text-xs font-bold tracking-[0.1em] text-orange-100/55 sm:text-sm`}
             >
-                [DRAG TO SWIPE]
+                <span className="md:hidden">[TAP TO SWIPE]</span>
+                <span className="hidden md:inline">[DRAG TO SWIPE]</span>
             </p>
 
-            <div className="relative mx-auto mt-14 h-160 w-80 md:w-[min(88vw,72rem)] md:mt-16 md:h-[24rem]">
+            {/* The deck, not each card, is the platform: cards reshuffle, the deck stays. */}
+            <div data-toopy-platform className="relative mx-auto mt-14 h-160 w-80 md:w-[min(88vw,72rem)] md:mt-16 md:h-[24rem]">
                 {orderedRecommendations.map(
                     ({ recommendation, stackIndex }) => {
                         const isFront = stackIndex === 0;
-                        const pose = getStackPose(stackIndex);;
+                        const pose = getStackPose(stackIndex);
+                        const flinging = isFront && isFlinging;
 
                         return (
                             <motion.article
                                 key={recommendation.id}
                                 aria-label={`${recommendation.name} recommendation`}
-                                animate={{
-                                    x: pose.x,
-                                    y: pose.y,
-                                    rotate: pose.rotate,
-                                    scale: pose.scale,
-                                    opacity: stackIndex < MAX_VISIBLE_CARDS ? 1 : 0,
-                                }}
+                                animate={
+                                    flinging
+                                        ? FLING_POSE
+                                        : {
+                                              x: pose.x,
+                                              y: pose.y,
+                                              rotate: pose.rotate,
+                                              scale: pose.scale,
+                                              opacity:
+                                                  stackIndex < MAX_VISIBLE_CARDS ? 1 : 0,
+                                          }
+                                }
                                 className={`absolute inset-0 overflow-hidden rounded-xl   text-black shadow-[0_24px_70px_rgba(0,0,0,0.48)] ${
-                                    isFront ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"
+                                    !isFront
+                                        ? "pointer-events-none"
+                                        : isMobile
+                                          ? "cursor-pointer"
+                                          : "cursor-grab active:cursor-grabbing"
                                 }`}
-                                drag={isFront && total > 1}
+                                drag={isFront && total > 1 && !isMobile}
                                 dragConstraints={{
                                     bottom: 220,
                                     left: -260,
@@ -154,7 +199,11 @@ function RecommendationDeck() {
                                     bounceStiffness: 420,
                                 }}
                                 initial={false}
+                                onAnimationComplete={
+                                    flinging ? handleFlingComplete : undefined
+                                }
                                 onDragEnd={handleDragEnd}
+                                onTap={isFront && isMobile ? handleTap : undefined}
                                 onKeyDown={(event) => {
                                     if (!isFront || total < 2) return;
                                     if (
@@ -168,12 +217,16 @@ function RecommendationDeck() {
                                     }
                                 }}
                                 style={{
-                                    touchAction: isFront ? "none" : "auto",
+                                    touchAction: isFront && !isMobile ? "none" : "auto",
                                     zIndex: total - stackIndex,
                                 }}
                                 tabIndex={isFront ? 0 : -1}
                                 transition={
-                                    prefersReducedMotion ? { duration: 0 } : STACK_SPRING
+                                    prefersReducedMotion
+                                        ? { duration: 0 }
+                                        : flinging
+                                          ? FLING_TRANSITION
+                                          : STACK_SPRING
                                 }
                                 whileDrag={{ scale: 1.012 }}
                             >
@@ -326,6 +379,7 @@ export default function RecommenderGlowSection({
                 <div className="relative z-10 flex pt-80 w-full flex-col justify-end  pb-7  sm:pb-9 lg:pb-11">
                     <h2
                         id="recommender-heading"
+                        data-toopy-platform="text"
                         className={`${spaceGrotesk.className} whitespace-nowrap bg-gradient-to-b from-orange-600 via-white to-zinc-100 bg-clip-text text-center text-[clamp(3.15rem,15vw,17rem)] font-bold tracking-[-0.085em] text-transparent`}
                     >
                         {heading}

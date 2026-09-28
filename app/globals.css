@@ -526,3 +526,180 @@ body::-webkit-scrollbar {
 html[data-skip-loader] .loading-screen {
   display: none;
 }
+
+/*
+ * Skills card reveal. Runs as a compositor-only CSS transition instead of a
+ * per-card JS spring. Below md the card just fades in and the WebGL logo pop
+ * carries the motion; the drop is desktop-only. The linear() curve is a
+ * sampled spring (stiffness 320, damping 14) with a cubic-bezier fallback.
+ */
+.skill-card {
+    --skill-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transition:
+        opacity 0.25s ease var(--drop-delay, 0s),
+        translate 0.3s,
+        border-color 0.3s,
+        box-shadow 0.3s;
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+    .skill-card {
+        --skill-spring: linear(0, 0.09, 0.304, 0.571, 0.83, 1.041, 1.183, 1.252, 1.258, 1.22, 1.157, 1.086, 1.022, 0.973, 0.943, 0.932, 0.935, 0.948, 0.966, 0.984, 1, 1.011, 1.017, 1.018, 1.016, 1.012, 1.007, 1.002, 1);
+    }
+}
+
+.skill-card[data-revealed] {
+    opacity: 1;
+}
+
+@media (min-width: 48rem) {
+    .skill-card {
+        transform: translateY(-48px);
+        transition:
+            opacity 0.25s ease var(--drop-delay, 0s),
+            transform 0.7s var(--skill-spring) var(--drop-delay, 0s),
+            translate 0.3s,
+            border-color 0.3s,
+            box-shadow 0.3s;
+    }
+
+    .skill-card[data-revealed] {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skill-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+/*
+ * Toopy: walks the bottom edge back and forth, legs bob in turn, eyelids
+ * blink every 4s. Hover pauses the walk and legs (the blink keeps going).
+ * Dragging (Toopy.jsx) pauses the walk too and swaps the step for a dangle.
+ * On a platform (data-layer="page") Toopy walks it once via toopy-platform-walk,
+ * with the endpoints passed in as --walk-* custom properties.
+ */
+.toopy-track {
+    container-type: inline-size;
+}
+
+.toopy {
+    /* --toopy-gutter and --toopy-walk-time are set inline from Toopy.jsx. */
+    cursor: grab;
+}
+
+.toopy[data-layer="floor"] {
+    animation: toopy-walk var(--toopy-walk-time) linear infinite alternate;
+}
+
+.toopy[data-layer="page"] {
+    animation: toopy-platform-walk var(--walk-time) linear forwards;
+}
+
+.toopy-leg {
+    animation: toopy-step 0.45s ease-in-out infinite alternate;
+}
+
+/* Half a stride out of phase, so the legs alternate. */
+#toopy_leg_2 {
+    animation-delay: -0.25s;
+}
+
+.toopy-eye {
+    translate: var(--eye-x, 0px) var(--eye-y, 0px);
+    transition: translate 0.25s ease-out;
+}
+
+.toopy-eyelid {
+    animation: toopy-blink 4s ease-in-out infinite;
+}
+
+.toopy:hover,
+.toopy:hover .toopy-leg,
+.toopy:not([data-mode="walk"]),
+.toopy:not([data-mode="walk"]) .toopy-leg {
+    animation-play-state: paused;
+}
+
+/* Airborne: position comes from inline styles / WAAPI, not the walk. */
+.toopy[data-mode="held"],
+.toopy[data-mode="falling"],
+.toopy[data-mode="jumping"] {
+    animation: none;
+    cursor: grabbing;
+}
+
+/* Airborne legs flail side to side from the hip (top of the leg). */
+.toopy[data-mode="held"] .toopy-leg,
+.toopy[data-mode="falling"] .toopy-leg,
+.toopy[data-mode="jumping"] .toopy-leg {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: toopy-dangle 0.25s ease-in-out infinite alternate;
+}
+
+@keyframes toopy-walk {
+    from {
+        translate: var(--toopy-gutter) 0;
+    }
+    to {
+        translate: calc(100cqw - 49px - var(--toopy-gutter)) 0;
+    }
+}
+
+@keyframes toopy-platform-walk {
+    from {
+        translate: var(--walk-from) var(--walk-y);
+    }
+    to {
+        translate: var(--walk-to) var(--walk-y);
+    }
+}
+
+@keyframes toopy-step {
+    from {
+        translate: 0 0;
+    }
+    to {
+        translate: 0 -4px;
+    }
+}
+
+@keyframes toopy-dangle {
+    from {
+        rotate: -18deg;
+    }
+    to {
+        rotate: 18deg;
+    }
+}
+
+@keyframes toopy-blink {
+    0%,
+    92%,
+    100% {
+        translate: 0 0;
+    }
+    96% {
+        translate: 0 7px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toopy,
+    .toopy[data-layer],
+    .toopy-leg,
+    .toopy[data-mode] .toopy-leg,
+    .toopy-eyelid {
+        animation: none;
+    }
+
+    .toopy {
+        translate: var(--toopy-gutter) 0;
+    }
+}

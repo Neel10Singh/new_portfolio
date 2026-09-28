@@ -204,7 +204,7 @@ export default function ExperienceTimeline({
 
 	return (
 		<div id="experience" className="overflow-x-clip px-5 py-24 2xl:px-60 lg:px-40 md:py-32 w-full flex flex-col items-center">
-		<h2 className={`mb-14 text-center font-bold text-white mix-blend-difference ${spaceGrotesk.className} text-[clamp(4rem,16vw,40rem)] md:mb-20`}>
+		<h2 data-toopy-platform="text" className={`mb-14 text-center font-bold text-white mix-blend-difference ${spaceGrotesk.className} text-[clamp(4rem,16vw,40rem)] md:mb-20`}>
 			{heading}
 		</h2>
 		<section className="relative  w-full max-w-7xl  ">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useInView, useReducedMotion } from "framer-motion";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, View } from "@react-three/drei";
 import * as THREE from "three";
@@ -401,8 +401,7 @@ function ProceduralMark({ kind, color }: { kind: SymbolKind; color: string }) {
     }
 }
 
-/** Card drop-in: how far above its slot a card starts, and the stagger. */
-const DROP_FROM = -48;
+/** Card reveal stagger; the drop itself is in .skill-card (globals.css). */
 const DROP_STAGGER = 0.06;
 const DROP_MAX_DELAY = 0.36;
 
@@ -561,15 +560,13 @@ function SkillCard({
     const delay = Math.min(groupIndex * DROP_STAGGER, DROP_MAX_DELAY);
 
     return (
-        <motion.article
+        <article
             ref={cardRef}
-            initial={reduceMotion ? false : { opacity: 0, y: DROP_FROM }}
-            animate={revealed ? { opacity: 1, y: 0 } : undefined}
-            transition={{
-                y: { type: "spring", stiffness: 320, damping: 14, delay },
-                opacity: { duration: 0.25, delay },
-            }}
-            className="group relative isolate h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#090909] transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-orange-400/50 hover:shadow-[0_18px_50px_rgba(249,115,22,0.10)]">
+            data-toopy-platform
+            // Reveal (fade everywhere, drop from md up) lives in .skill-card.
+            data-revealed={revealed ? "" : undefined}
+            style={{ "--drop-delay": `${delay}s` } as React.CSSProperties}
+            className="skill-card group relative isolate h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#090909] hover:-translate-y-1 hover:border-orange-400/50 hover:shadow-[0_18px_50px_rgba(249,115,22,0.10)]">
             <div
                 aria-hidden
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -597,7 +594,7 @@ function SkillCard({
             >
                 {skill.name}
             </p>
-        </motion.article>
+        </article>
     );
 }
 
@@ -610,12 +607,13 @@ export default function SkillsSection() {
             id="skills"
             ref={sectionRef}
             aria-labelledby="skills-heading"
-            className="relative isolate w-full bg-black px-5 py-24 pt-12 text-white md:px-10 md:py-32  md:pt-12 xl:px-16"
+            className="relative isolate w-full  px-5 py-24 pt-12 text-white md:px-10 md:py-32  md:pt-12 xl:px-16"
         >
             <div className="relative mx-auto max-w-[1600px]">
                 
                 <h2
                     id="skills-heading"
+                    data-toopy-platform="text"
                     className={`${spaceGrotesk.className} text-[clamp(4rem,13vw,12rem)] font-bold leading-[0.82] tracking-[-0.075em] text-white`}
                 >
                     SKILLS<span className="text-orange-500">.</span>

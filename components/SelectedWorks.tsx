@@ -130,7 +130,7 @@ function ProjectCard({
                 rel={project.external ? "noreferrer" : undefined}
                 target={project.external ? "_blank" : undefined}
             >
-                <div className="relative aspect-[16/11] overflow-hidden bg-zinc-950">
+                <div className="relative aspect-[16/11] overflow-hidden bg-zinc-950" data-toopy-platform>
                     <ProjectArtwork index={index} project={project} />
 
                     {/* HOVER INFO OVERLAY */}
@@ -228,7 +228,7 @@ export default function SelectedWorksRoundCursorV3({
     return (
         <section
             aria-labelledby="selected-works-heading"
-            className="relative w-full overflow-x-clip bg-black px-5 py-24 text-white md:px-10 md:py-32 xl:px-16"
+            className="relative w-full overflow-x-clip b px-5 py-24 text-white md:px-10 md:py-32 xl:px-16"
         >
 
             <div className="mx-auto max-w-[1600px]">
@@ -236,6 +236,7 @@ export default function SelectedWorksRoundCursorV3({
                     <div>
                         <h2
                             id="selected-works-heading"
+                            data-toopy-platform="text"
                             className={`${spaceGrotesk.className} text-[clamp(4rem,12.5vw,12.5rem)] font-bold leading-[0.78] tracking-[-0.08em] text-zinc-50`}
                         >
                             {heading}

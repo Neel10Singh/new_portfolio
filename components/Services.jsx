@@ -73,7 +73,8 @@ export default function Services() {
       ref={sectionRef}
       className="
         relative
-        grid
+        hidden
+        md:grid
         min-h-[720px]
         grid-cols-[minmax(150px,0.4fr)_minmax(500px,1.5fr)_minmax(280px,0.8fr)]
         gap-[60px]
@@ -86,7 +87,7 @@ export default function Services() {
         max-[1100px]:grid-cols-[130px_minmax(400px,1fr)_230px]
         max-[1100px]:gap-[30px]
 
-        max-[800px]:block
+        md:max-[800px]:block
         max-[800px]:min-h-0
         max-[800px]:px-5
       "

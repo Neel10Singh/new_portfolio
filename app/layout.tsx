@@ -5,6 +5,7 @@ import Cursor from "@/components/Cursor";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import Navbar from "@/components/Navbar";
 import LoadingScreen from "@/components/LoadingScreen";
+import Toopy from "@/components/Toopy"
 
 
 const robotoMono = Roboto_Mono({
@@ -61,6 +62,7 @@ export default function RootLayout({
         <LoadingScreen />
         <Navbar/>
         <Cursor />
+        <Toopy />
         <SmoothScrollProvider>
             {children}
         </SmoothScrollProvider>

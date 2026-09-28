@@ -44,6 +44,7 @@ export default function Footer() {
 
       {/* MAIN TEXT */}
       <h2
+        data-toopy-platform="text"
         className={`
           ${spaceGrotesk.className}
           text-center

@@ -40,6 +40,7 @@ const PLATFORM_MESSAGES = [
 /* Shown while Toopy hops off the end of a platform. */
 const JUMP_MESSAGES = ["Wheee!", "Geronimo!", "Here I go!"];
 
+/** Size of the SVG artwork; on screen it's scaled by --toopy-scale (globals.css). */
 const TOOPY_WIDTH = 49;
 const TOOPY_HEIGHT = 61;
 /** Seconds for one floor crossing; platforms reuse the same speed. */
@@ -114,11 +115,11 @@ function measurePlatform(element) {
 }
 
 /** The first platform under centerX, below feetY and above the floor. */
-function findPlatform(centerX, feetY, floorY) {
+function findPlatform(centerX, feetY, floorY, minWidth) {
     let best = null;
     for (const element of document.querySelectorAll("[data-toopy-platform]")) {
         const platform = measurePlatform(element);
-        if (!platform || platform.right - platform.left < TOOPY_WIDTH) continue;
+        if (!platform || platform.right - platform.left < minWidth) continue;
         if (centerX < platform.left || centerX > platform.right) continue;
         if (platform.top < feetY - 2 || platform.top >= floorY - 4) continue;
         if (!best || platform.top < best.top) best = platform;
@@ -131,7 +132,7 @@ const LOOK_X = 3;
 const LOOK_Y = 2.5;
 /** Cursor distance (px) at which the eyes reach their full shift. */
 const LOOK_RANGE = 220;
-/** Eye centre within the 49x61 SVG, which renders at 1:1 px. */
+/** Eye centre within the 49x61 SVG artwork (scaled to the rendered size). */
 const EYES_CENTER = { x: 24.5, y: 21 };
 
 /*
@@ -153,8 +154,9 @@ function useEyesFollowPointer(svgRef) {
             frame = 0;
             if (!pointer) return;
             const rect = svg.getBoundingClientRect();
-            const dx = pointer.x - (rect.left + EYES_CENTER.x);
-            const dy = pointer.y - (rect.top + EYES_CENTER.y);
+            const scale = rect.width / TOOPY_WIDTH;
+            const dx = pointer.x - (rect.left + EYES_CENTER.x * scale);
+            const dy = pointer.y - (rect.top + EYES_CENTER.y * scale);
             const distance = Math.hypot(dx, dy) || 1;
             const reach = Math.min(distance / LOOK_RANGE, 1);
             svg.style.setProperty("--eye-x", `${((dx / distance) * reach * LOOK_X).toFixed(2)}px`);
@@ -232,11 +234,15 @@ const Toopy = () => {
         toopyRef.current.style.translate = `${x}px ${y}px`;
     };
 
+    /** Rendered size, which shrinks on small screens (see --toopy-scale). */
+    const width = () => toopyRef.current?.offsetWidth || TOOPY_WIDTH;
+    const height = () => toopyRef.current?.offsetHeight || TOOPY_HEIGHT;
+
     const floorMaxX = () =>
-        Math.max(trackRef.current.clientWidth - TOOPY_WIDTH - GUTTER, GUTTER);
+        Math.max(trackRef.current.clientWidth - width() - GUTTER, GUTTER);
 
     const updateTooltipSide = (left) => {
-        setTooltipSide(left + TOOPY_WIDTH / 2 < window.innerWidth / 2 ? "left" : "right");
+        setTooltipSide(left + width() / 2 < window.innerWidth / 2 ? "left" : "right");
     };
 
     const handleMouseEnter = (event) => {
@@ -317,7 +323,7 @@ const Toopy = () => {
     const landOnPlatform = (at, platform) => {
         const toopy = toopyRef.current;
         const speed = Math.max(floorMaxX() - GUTTER, 1) / (WALK_SECONDS * 1000);
-        const toX = walkDir.current > 0 ? platform.right - TOOPY_WIDTH : platform.left;
+        const toX = walkDir.current > 0 ? platform.right - width() : platform.left;
 
         toopy.style.setProperty("--walk-from", `${at.x}px`);
         toopy.style.setProperty("--walk-to", `${toX}px`);
@@ -378,7 +384,7 @@ const Toopy = () => {
         go("jumping", "floor");
         const floorTop = trackRef.current.getBoundingClientRect().top;
         // Start fully above the viewport so the fall covers the whole screen.
-        const from = { x: landX, y: -floorTop - TOOPY_HEIGHT };
+        const from = { x: landX, y: -floorTop - height() };
         place(from.x, from.y);
         updateTooltipSide(landX);
         fall(from, { x: landX, y: 0 }, () => landOnFloor(landX, null));
@@ -461,7 +467,7 @@ const Toopy = () => {
         }
 
         // Keep Toopy on screen; it can be lifted but not pushed below the floor.
-        state.x = clamp(state.left + dx, 0, trackRef.current.clientWidth - TOOPY_WIDTH);
+        state.x = clamp(state.left + dx, 0, trackRef.current.clientWidth - width());
         state.y = clamp(state.top + dy - state.floorTop, -state.floorTop, 0);
         place(state.x, state.y);
         updateTooltipSide(state.x);
@@ -477,9 +483,9 @@ const Toopy = () => {
             return;
         }
 
-        const floorY = state.floorTop + TOOPY_HEIGHT;
-        const feetY = state.floorTop + state.y + TOOPY_HEIGHT;
-        const platform = findPlatform(state.x + TOOPY_WIDTH / 2, feetY, floorY);
+        const floorY = state.floorTop + height();
+        const feetY = state.floorTop + state.y + height();
+        const platform = findPlatform(state.x + width() / 2, feetY, floorY, width());
 
         if (!platform) {
             const landX = clamp(state.x, GUTTER, floorMaxX());
@@ -499,8 +505,8 @@ const Toopy = () => {
         };
         const from = { x: state.x + scrollX, y: state.floorTop + state.y + scrollY };
         const to = {
-            x: clamp(from.x, target.left, target.right - TOOPY_WIDTH),
-            y: target.top - TOOPY_HEIGHT,
+            x: clamp(from.x, target.left, target.right - width()),
+            y: target.top - height(),
         };
 
         go("falling", "page");
@@ -524,7 +530,7 @@ const Toopy = () => {
                 ref={toopyRef}
                 data-layer={layer}
                 data-mode={mode}
-                className="toopy group pointer-events-auto relative w-[49px] touch-none select-none"
+                className="toopy group pointer-events-auto relative w-(--toopy-width) touch-none select-none"
                 onAnimationEnd={handleAnimationEnd}
                 onLostPointerCapture={handlePointerUp}
                 onMouseEnter={handleMouseEnter}
@@ -554,12 +560,12 @@ const Toopy = () => {
 
                 <svg
                     ref={svgRef}
-                    width="49"
-                    height="61"
+                    width="100%"
+                    height="100%"
                     viewBox="0 0 49 61"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="block"
+                    className="block aspect-49/61"
                 >
                     <rect id="toopy_body" width="49" height="45" rx="8" fill="#F6F4F4"/>
                     <rect className="toopy-leg" id="toopy_leg_1" x="7.27723" y="33" width="9.70297" height="28" rx="2.85149" fill="#F6F4F4"/>

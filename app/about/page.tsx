@@ -208,7 +208,9 @@ export default function AboutPage() {
                   ))}
                 </div>
 
-                <div
+                <a
+                  href="https://www.linkedin.com/in/neelaksh-singh-7b020a17a/"
+                  target="_blank"
                   className={`${courierPrime.className} mt-4 flex h-12 items-center relative group justify-center border border-neutral-800 text-lg text-neutral-400`}
                 >
                     <span className="absolute group-hover:left-[-6px] group-hover:top-[-6px] group-hover:h-4 group-hover:w-4 left-[-1px] top-[-1px] h-2 w-2 border-l border-t border-neutral-300 transition-all" />
@@ -216,7 +218,7 @@ export default function AboutPage() {
                     <span className="absolute group-hover:left-[-6px] group-hover:bottom-[-6px] group-hover:h-4 group-hover:w-4 bottom-[-1px] left-[-1px] h-2 w-2 border-b border-l border-neutral-300 transition-all" />
                     <span className="absolute group-hover:right-[-6px] group-hover:bottom-[-6px] group-hover:h-4 group-hover:w-4 bottom-[-1px] right-[-1px] h-2 w-2 border-b border-r border-neutral-300 transition-all" />
 
-                    <span className="z-10 w-full h-full flex justify-center items-center">Here To Unlock Other Skills</span>
+                    <span className="z-10 w-full h-full flex justify-center items-center">Hire To Unlock Other Skills</span>
                     <FaLock 
                     className="
                         absolute
@@ -226,7 +228,7 @@ export default function AboutPage() {
                         w-6
                         h-6" 
                     />
-                </div>
+                </a>
               </div>
             </div>
 

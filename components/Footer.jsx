@@ -64,7 +64,8 @@ export default function Footer() {
 
       {/* CTA */}
       <a
-        href="#contact"
+        href="https://www.linkedin.com/in/neelaksh-singh-7b020a17a"
+        target="_blank"
         className={`
           ${courierPrime.className}
           mt-16
@@ -113,7 +114,7 @@ export default function Footer() {
         <div className="flex items-center gap-12 sm:gap-16 md:gap-20">
           {/* LEETCODE */}
           <a
-            href="#"
+            href="https://leetcode.com/u/neelaksh10singh/"
             target="_blank"
             rel="noreferrer"
             aria-label="LeetCode"
@@ -159,7 +160,7 @@ export default function Footer() {
 
           {/* LINKEDIN */}
           <a
-            href="#"
+            href="https://www.linkedin.com/in/neelaksh-singh-7b020a17a/"
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
@@ -196,7 +197,7 @@ export default function Footer() {
 
           {/* GITHUB */}
           <a
-            href="#"
+            href="https://github.com/neel10singh"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"

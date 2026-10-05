@@ -46,6 +46,7 @@ export default function ProjectsPage() {
             projects={projects}
             viewAllHref="/projects"
             showAll={true}
+            heading="List of Works"
         />
 
       <Footer />

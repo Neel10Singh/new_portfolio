@@ -134,7 +134,7 @@ function ProjectCard({
                     <ProjectArtwork index={index} project={project} />
 
                     {/* HOVER INFO OVERLAY */}
-                    <div
+                    {project.info && <div
                     className="
                         pointer-events-none
                         absolute
@@ -179,7 +179,7 @@ function ProjectCard({
                         {project.info}
                         </p>
                     )}
-                </div>
+                </div>}
 
                     <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 flex flex-wrap gap-2 sm:inset-x-6 sm:bottom-6">
                         {project.tags.map((tag) => (

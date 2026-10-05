@@ -590,7 +590,16 @@ html[data-skip-loader] .loading-screen {
 
 .toopy {
     /* --toopy-gutter and --toopy-walk-time are set inline from Toopy.jsx. */
+    --toopy-scale: 1;
+    --toopy-width: calc(49px * var(--toopy-scale));
     cursor: grab;
+}
+
+/* Smaller on phones; Toopy.jsx measures the rendered size, so this is the only knob. */
+@media (max-width: 639px) {
+    .toopy {
+        --toopy-scale: 0.7;
+    }
 }
 
 .toopy[data-layer="floor"] {
@@ -602,7 +611,7 @@ html[data-skip-loader] .loading-screen {
 }
 
 .toopy-leg {
-    animation: toopy-step 0.45s ease-in-out infinite alternate;
+    animation: toopy-step 0.25s ease-in-out infinite alternate;
 }
 
 /* Half a stride out of phase, so the legs alternate. */
@@ -648,7 +657,7 @@ html[data-skip-loader] .loading-screen {
         translate: var(--toopy-gutter) 0;
     }
     to {
-        translate: calc(100cqw - 49px - var(--toopy-gutter)) 0;
+        translate: calc(100cqw - var(--toopy-width) - var(--toopy-gutter)) 0;
     }
 }
 

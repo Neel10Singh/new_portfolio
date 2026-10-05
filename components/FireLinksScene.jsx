@@ -40,22 +40,22 @@ const CARDS = [
     {
         label: "LinkedIn",
         texture: "/textures/LIBaked.jpg",
-        href: "https://linkedin.com/in/your-profile",
+        href: "https://www.linkedin.com/in/neelaksh-singh-7b020a17a",
     },
     {
         label: "LeetCode",
         texture: "/textures/LCBaked.jpg",
-        href: "https://leetcode.com/your-profile",
+        href: "https://leetcode.com/u/neelaksh10singh/",
     },
     {
         label: "GitHub",
         texture: "/textures/GIBaked.jpg",
-        href: "https://github.com/your-profile",
+        href: "https://github.com/neel10singh",
     },
     {
         label: "Resume",
         texture: "/textures/REBaked.jpg",
-        href: "/resume.pdf",
+        href: "https://drive.google.com/file/d/15s2GAxZJSc_doqbPelHpwa3bh7om05He/view?usp=sharing",
     },
 ];
 

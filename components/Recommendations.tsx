@@ -393,7 +393,7 @@ export default function RecommenderGlowSection({
                         ))}
                     </div>
                 </div>
-                <div className="absolute flex z-10 justify-between h-620 w-[50vw] top-80 left-1/2 -translate-x-1/2 rotate-180">
+                <div className="absolute flex z-10 justify-between h-440 md:h-540 xl:h-620 w-[50vw] top-80 left-1/2 -translate-x-1/2 rotate-180">
                         <div className="lines1 relative line11 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
                         <div className="lines1 relative line31 h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
                         <div className="lines1 relative line21 hiden md:inline h-full w-0.5 overflow-hidden bg-linear-to-b from-neutral-500/5 via-neutral-500/10 to-neutral-300/30"/>
